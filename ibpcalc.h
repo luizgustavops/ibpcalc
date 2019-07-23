@@ -7,19 +7,19 @@
    Date: 20-jul-2019
 */
 
-/* 
+/*
    Structure that contains the numerics of the Ibp parameter.
 */
-struct IbpParam {
+struct IbpNumerics {
    int sys;
    int sysIndex;
    int dia;
    int diaIndex;
 };
 
-/* 
+/*
    Function to calculate the Ibp parameters, stored in the IbpParam structure.
    Returns 0 if success and -1 if fail.
 */
-int ibpCalc(const char* buf, int size, int index, struct IbpParam* const params);
+int ibpCalc(const char* buf, int size, int index, struct IbpNumerics* const numerics);
 

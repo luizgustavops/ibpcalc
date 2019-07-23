@@ -70,7 +70,10 @@ int isValley(const char* buf, int size, int i)
    return 0;
 }
 
-int ibpCalc(const char* buf, int size, int index, struct IbpParam* const params)
+
+// The ibpCalc function
+
+int ibpCalc(const char* buf, int size, int index, struct IbpNumerics* const numerics)
 {    
    struct Sample {
       int value;
