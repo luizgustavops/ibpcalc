@@ -1,6 +1,8 @@
-/*
-   The Ibp numerics calculation library implementation.
-*/
+/**
+ * \file ibpcalc.c
+ * \brief The Ibp numerics calculation library implementation.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
@@ -10,14 +12,25 @@
 #define TRUE 1
 #define FALSE 0
 
-#define SUCCESS 0
-#define FAIL -1
-
-// Because of the given IBP waveform characteristic
-// shape, we need to search only for 2 peaks and to
-// valleys forward and backward to find the nearest
-// systolic and diastolic pressure values.
+/**
+ * \brief Number of peaks and valleys to search forward and backward.
+ *
+ * Because of the given IBP waveform characteristic shape, we need to
+ * search only for 2 peaks and to valleys forward and backward to find
+ * the nearest systolic and diastolic pressure values.
+ */
 #define MAXSEARCH 2
+
+/**
+ * \brief Limit the search to 6 seconds of waveform to find a heartbeat.
+ *
+ * A 10 bpm is the lowest heart rate this algorithm can work. This will limit
+ * the search despite of the size of the buffer informed to the algorithm,
+ * resulting in a cost of O(1).
+ * As we have 8ms between samples, the max samples to be searched will be
+ * 6000ms / 8ms = 750 samples, 375 samples for each side (forward and backward).
+ */
+#define MAXSAMPLES 375
 
 // Debug on/off
 #define print printf
@@ -25,6 +38,13 @@
 
 // Local functions
 
+/**
+ * \brief Check if the sample of index 'i' is a peak.
+ * \param buf Waveform buffer.
+ * \param size Size of the waveform buffer.
+ * \param i Sample index.
+ * \return TRUE if it is a peak and FALSE otherwise.
+ */
 int isPeak(const char* buf, int size, int i)
 {
    if (i > 0 && i < size-1) {
@@ -56,6 +76,13 @@ int isPeak(const char* buf, int size, int i)
    return FALSE;
 }
 
+/**
+ * \brief Check if the sample of index 'i' is a valley.
+ * \param buf Waveform buffer.
+ * \param size Size of the waveform buffer.
+ * \param i Sample index.
+ * \return TRUE if it is a valley and FALSE otherwise.
+ */
 int isValley(const char* buf, int size, int i)
 {
    if (i > 0 && i < size-1) {
@@ -93,20 +120,29 @@ int isValley(const char* buf, int size, int i)
 
 int ibpCalc(const char* buf, int size, int index, struct IbpNumerics* const numerics)
 {    
+   /**
+    * Local structure to store the peaks and valleys indexes and values.
+    */
    struct Sample {
       int value;
       int index;
    };
 
-   // Local variables to store the search result of the forward and backward peaks and valleys
+   /**
+    * Local variables to store the search result of the forward and backward peaks and valleys.
+    */
    struct Sample fwMax, fwMin, bwMax, bwMin;
 
-   // Local variables to store the overall values of max and min found
+   /**
+    * Local variables to store the overall values of max and min found.
+    */
    const struct Sample* max = NULL;
    const struct Sample* min = NULL;
 
-   // Local aux variables
-   int i = 0, maxSamples, iMax, iMin;
+   /**
+    * Local auxiliary variables.
+    */
+   int i = 0, iMax, iMin;
 
    print("Size=%d, index=%d\n", size, index);
 
@@ -124,21 +160,12 @@ int ibpCalc(const char* buf, int size, int index, struct IbpNumerics* const nume
    iMax = 0;
    iMin = 0;
 
-   // Limit the search to 6 seconds of waveform to find a heartbeat.
-   //
-   // A 10 bpm is the lowest heart rate this algorithm can work. This will limit
-   // the search despite of the size of the buffer informed to the algorithm,
-   // resulting in a cost of O(1).
-   // As we have 8ms between samples, the max samples to be searched will be
-   // 6000ms / 8ms = 750 samples, 375 samples for each side (forward and backward).
-   maxSamples = 375;
-
    // Search FORWARD for, at maximum, MAXSEARCH peaks or MAXSEARCH valleys.
-   for(i = index; (i < (index + maxSamples) && i < size && (iMax < MAXSEARCH && iMin < MAXSEARCH)); i++) {
+   for(i = index; (i < (index + MAXSAMPLES) && i < size && (iMax < MAXSEARCH && iMin < MAXSEARCH)); i++) {
 
       print("FORWARD search index = %3d, value = %3d, iMax = %3d, iMin = %3d\n", i, buf[i], iMax, iMin);
 
-      if (isPeak(buf, index + maxSamples, i)) {
+      if (isPeak(buf, index + MAXSAMPLES, i)) {
 
          if (buf[i] > fwMax.value || (buf[i] == fwMax.value && abs(index - i) < abs(index - fwMax.index))) {
              fwMax.value = buf[i];
@@ -148,7 +175,7 @@ int ibpCalc(const char* buf, int size, int index, struct IbpNumerics* const nume
          }
 
       }
-      else if (isValley(buf, index + maxSamples, i)) {
+      else if (isValley(buf, index + MAXSAMPLES, i)) {
 
          if (buf[i] < fwMin.value || (buf[i] == fwMin.value && abs(index - i) < abs(index - fwMin.index))) {
             fwMin.value = buf[i];
@@ -166,11 +193,11 @@ int ibpCalc(const char* buf, int size, int index, struct IbpNumerics* const nume
    iMin = 0;
 
    // Search BACKWARD for, at maximum, MAXSEARCH peaks or MAXSEARCH valleys
-   for(i = index; (i > (index - maxSamples) && i >= 0 && (iMax < MAXSEARCH && iMin < MAXSEARCH)); i--) {
+   for(i = index; (i > (index - MAXSAMPLES) && i >= 0 && (iMax < MAXSEARCH && iMin < MAXSEARCH)); i--) {
 
       print("BACKWARD search index = %3d, value = %3d, iMax = %3d, iMin = %3d\n", i, buf[i], iMax, iMin);
 
-      if (isPeak(buf, index + maxSamples, i)) {
+      if (isPeak(buf, index + MAXSAMPLES, i)) {
 
          // Check for peak with nearest index
          if (buf[i] > bwMax.value || (buf[i] == bwMax.value && abs(index - i) < abs(index - bwMax.index))) {
@@ -181,7 +208,7 @@ int ibpCalc(const char* buf, int size, int index, struct IbpNumerics* const nume
          }
 
       }
-      else if (isValley(buf, index + maxSamples, i)) {
+      else if (isValley(buf, index + MAXSAMPLES, i)) {
 
          // Check for valley with nearest index
          if (buf[i] < bwMin.value || (buf[i] == bwMin.value && abs(index - i) < abs(index - bwMin.index))) {

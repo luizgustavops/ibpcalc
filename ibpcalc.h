@@ -1,15 +1,27 @@
-/*
-   Invasive blood pressure parameters calculation library.
-   This library contains the algorithm to calculate the systolic and diastolic
-   pressures (in mmHg) of the buffer passed as argument to the ibpCalc function.
+/**
+ * \file ibpcalc.h
+ * \author Luiz Gustavo
+ * \date 20-jul-2019
+ * \brief Invasive blood pressure parameters calculation library.
+ *        This library contains the algorithm to calculate the systolic and diastolic
+ *        pressures (in mmHg) of the buffer passed as argument to the ibpCalc function.
+ */
 
-   Author: Luiz Gustavo
-   Date: 20-jul-2019
-*/
+/**
+ * \def SUCCESS
+ * \brief Code returned if the API function finds the sys and dia values.
+ */
+#define SUCCESS 0
 
-/*
-   Structure that contains the numerics of the Ibp parameter.
-*/
+/**
+ * \def FAIL
+ * \brief Code returned if the API function doesn't find the sys and dia values.
+ */
+#define FAIL -1
+
+/**
+ * \brief Structure that contains the numerics of the Ibp parameter.
+ */
 struct IbpNumerics {
    int sys;
    int sysIndex;
@@ -17,9 +29,12 @@ struct IbpNumerics {
    int diaIndex;
 };
 
-/*
-   Function to calculate the Ibp parameters, stored in the IbpParam structure.
-   Returns 0 if success and -1 if fail.
-*/
+/**
+ * \brief The function that calculates the nearest sys and dia values of an Ibp waveform.
+ * \param buf The Ibp waveform buffer.
+ * \param size Size of the Ibp waveform buffer.
+ * \param index Reference index informed by the user.
+ * \param numerics Structure to store and return the closest sys and dia values found.
+ * \return SUCCESS if sys and dia values were found and FAIL otherwise.
+ */
 int ibpCalc(const char* buf, int size, int index, struct IbpNumerics* const numerics);
-
