@@ -4,7 +4,7 @@
  * \date 20-jul-2019
  * \brief Invasive blood pressure parameters calculation library.
  *        This library contains the algorithm to calculate the systolic and diastolic
- *        pressures (in mmHg) of the buffer passed as argument to the ibpCalc function.
+ *        pressures (in mmHg) of the buffer informed as argument to the ibpCalc function.
  */
 
 /**

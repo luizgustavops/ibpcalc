@@ -33,8 +33,8 @@
 #define MAXSAMPLES 375
 
 // Debug on/off
-#define print printf
-//#define print //
+//#define PRINT printf
+#define PRINT(...) /**/
 
 // Local functions
 
@@ -144,7 +144,7 @@ int ibpCalc(const char* buf, int size, int index, struct IbpNumerics* const nume
     */
    int i = 0, iMax, iMin;
 
-   print("Size=%d, index=%d\n", size, index);
+   PRINT("Size=%d, index=%d\n", size, index);
 
    // Initialize variables
    fwMax.value = INT_MIN;
@@ -161,17 +161,21 @@ int ibpCalc(const char* buf, int size, int index, struct IbpNumerics* const nume
    iMin = 0;
 
    // Search FORWARD for, at maximum, MAXSEARCH peaks or MAXSEARCH valleys.
-   for(i = index; (i < (index + MAXSAMPLES) && i < size && (iMax < MAXSEARCH && iMin < MAXSEARCH)); i++) {
+   for(i = index; (i < (index + MAXSAMPLES) && i < size && (iMax < MAXSEARCH || iMin < MAXSEARCH)); i++) {
 
-      print("FORWARD search index = %3d, value = %3d, iMax = %3d, iMin = %3d\n", i, buf[i], iMax, iMin);
+      PRINT("FORWARD search index = %3d, value = %3d, iMax = %3d, iMin = %3d\n", i, buf[i], iMax, iMin);
 
       if (isPeak(buf, index + MAXSAMPLES, i)) {
 
          if (buf[i] > fwMax.value || (buf[i] == fwMax.value && abs(index - i) < abs(index - fwMax.index))) {
-             fwMax.value = buf[i];
-             fwMax.index = i;
-             print(" + Found Max [%d][%d]\n", buf[i], i);
-             iMax++;
+            fwMax.value = buf[i];
+            fwMax.index = i;
+            PRINT(" + Found Max [%d][%d]\n", buf[i], i);
+            iMax++;
+         }
+         else if (buf[i] != fwMax.value) {
+            PRINT(" + LOCAL Max [%d][%d]\n", buf[i], i);
+            iMax++;
          }
 
       }
@@ -180,22 +184,26 @@ int ibpCalc(const char* buf, int size, int index, struct IbpNumerics* const nume
          if (buf[i] < fwMin.value || (buf[i] == fwMin.value && abs(index - i) < abs(index - fwMin.index))) {
             fwMin.value = buf[i];
             fwMin.index = i;
-            print(" - Found Min [%d][%d]\n", buf[i], i);
+            PRINT(" - Found Min [%d][%d]\n", buf[i], i);
+            iMin++;
+         }
+         else if (buf[i] != fwMin.value) {
+            PRINT(" - LOCAL Min [%d][%d]\n", buf[i], i);
             iMin++;
          }
 
       }
    }
 
-   print("\n");
+   PRINT("\n");
 
    iMax = 0;
    iMin = 0;
 
    // Search BACKWARD for, at maximum, MAXSEARCH peaks or MAXSEARCH valleys
-   for(i = index; (i > (index - MAXSAMPLES) && i >= 0 && (iMax < MAXSEARCH && iMin < MAXSEARCH)); i--) {
+   for(i = index; (i > (index - MAXSAMPLES) && i >= 0 && (iMax < MAXSEARCH || iMin < MAXSEARCH)); i--) {
 
-      print("BACKWARD search index = %3d, value = %3d, iMax = %3d, iMin = %3d\n", i, buf[i], iMax, iMin);
+      PRINT("BACKWARD search index = %3d, value = %3d, iMax = %3d, iMin = %3d\n", i, buf[i], iMax, iMin);
 
       if (isPeak(buf, index + MAXSAMPLES, i)) {
 
@@ -203,7 +211,11 @@ int ibpCalc(const char* buf, int size, int index, struct IbpNumerics* const nume
          if (buf[i] > bwMax.value || (buf[i] == bwMax.value && abs(index - i) < abs(index - bwMax.index))) {
             bwMax.value = buf[i];
             bwMax.index = i;
-            print(" + Found Max [%d][%d]\n", buf[i], i);
+            PRINT(" + Found Max [%d][%d]\n", buf[i], i);
+            iMax++;
+         }
+         else if (buf[i] != bwMax.value) {
+            PRINT(" + LOCAL Max [%d][%d]\n", buf[i], i);
             iMax++;
          }
 
@@ -214,7 +226,11 @@ int ibpCalc(const char* buf, int size, int index, struct IbpNumerics* const nume
          if (buf[i] < bwMin.value || (buf[i] == bwMin.value && abs(index - i) < abs(index - bwMin.index))) {
             bwMin.value = buf[i];
             bwMin.index = i;
-            print(" - Found Min [%d][%d]\n", buf[i], i);
+            PRINT(" - Found Min [%d][%d]\n", buf[i], i);
+            iMin++;
+         }
+         else if (buf[i] != bwMin.value) {
+            PRINT(" - LOCAL Min [%d][%d]\n", buf[i], i);
             iMin++;
          }
 
@@ -222,10 +238,10 @@ int ibpCalc(const char* buf, int size, int index, struct IbpNumerics* const nume
    }
 
    // Debug
-   print("\nForwardMax = %d [%d], ForwardMin = %d [%d].\n", fwMax.value, fwMax.index,
+   PRINT("\nForwardMax = %d [%d], ForwardMin = %d [%d].\n", fwMax.value, fwMax.index,
                                                             fwMin.value, fwMin.index);
 
-   print("\nBackwardMax = %d [%d], BackwardMin = %d [%d].\n", bwMax.value, bwMax.index,
+   PRINT("\nBackwardMax = %d [%d], BackwardMin = %d [%d].\n", bwMax.value, bwMax.index,
                                                               bwMin.value, bwMin.index);
 
    // Calculate the closest peak
@@ -238,9 +254,9 @@ int ibpCalc(const char* buf, int size, int index, struct IbpNumerics* const nume
 
    }
    else if (fwMax.index != -1)
-       max = &fwMax;
+      max = &fwMax;
    else if (bwMax.index != -1)
-       max = &bwMax;
+      max = &bwMax;
 
    // Calculate the closest valley
    if (fwMin.index != -1 && bwMin.index != -1) {
@@ -252,22 +268,22 @@ int ibpCalc(const char* buf, int size, int index, struct IbpNumerics* const nume
 
    }
    else if (fwMin.index != -1)
-       min = &fwMin;
+      min = &fwMin;
    else if (bwMin.index != -1)
-       min = &bwMin;
+      min = &bwMin;
 
    // Check if valid values were found
    if (max != NULL && min != NULL) {
 
-       print("\nMax = %d [%d], Min = %d [%d].\n", max->value, max->index, min->value, min->index);
+      PRINT("\nMax = %d [%d], Min = %d [%d].\n", max->value, max->index, min->value, min->index);
 
-       numerics->sys      = max->value;
-       numerics->sysIndex = max->index;
+      numerics->sys      = max->value;
+      numerics->sysIndex = max->index;
 
-       numerics->dia      = min->value;
-       numerics->diaIndex = min->index;
+      numerics->dia      = min->value;
+      numerics->diaIndex = min->index;
 
-       return SUCCESS;
+      return SUCCESS;
    }
    
    return FAIL;
