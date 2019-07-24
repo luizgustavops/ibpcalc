@@ -30,4 +30,7 @@ waveform buffer.
      cmake .
      make (will generate the libibpcalc.so library and ibpcalc_test unit tests binary)
      make test (check the result log in the Testing dir)
-     
+
+* Additional documentation
+     Please read the doc/ directory files for algorithm explanation and the coding
+     style used in this project.     

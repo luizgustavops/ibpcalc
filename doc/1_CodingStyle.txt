@@ -1,0 +1,64 @@
+IbpCalc library coding style
+
+This is the coding style for the IbpCalc library.
+
+1) Indentation
+   Use 3 characters for indentation and no tabs.
+   Don't put multiple assignments in a single line.
+
+
+2) Braces and spaces
+   Put the opening brace last on the line and put the closing brace first.
+   Use this for all non-function statement blocks. E.g.:
+
+   if (something) {
+      ...
+   }
+
+   switch(variable) {
+   case 'a':
+      b;
+   case 'c':
+      d;
+   default:
+      break;
+   }
+
+   For functions, put the opening brace in the first position of the next line:
+
+   int function(var a, var b, ...)
+   {
+      ...
+      return x;
+   }
+
+
+3) Naming
+   Use short variable and function names, with the words in mixed-case letters.
+   E.g.:
+
+   int sysIndex;
+
+   int ibpCalc(var a, var b, ...);
+
+
+4) Commenting
+   Use doxygen-style comments. E.g.:
+
+   /**
+    * \brief Brief description
+    */
+
+   For non-doc comments, use the '//' characters to explain some behaviour of
+   the algorithm. E.g.:
+
+   // Temporary variable to store the peak value
+   int peakValue;
+
+
+
+5) References
+   - The C Programming Language, Second Edition by Brian W. Kernighan and Dennis M. Ritchie. Prentice Hall, Inc., 1988. ISBN 0-13-110362-8 (paperback), 0-13-110370-9 (hardback).
+
+   - Kernel process/coding-style.rst, by greg@kroah.com at OLS 2002: http://www.kroah.com/linux/talks/ols_2002_kernel_codingstyle_talk/html/
+
