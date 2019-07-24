@@ -1,0 +1,35 @@
+The invasive blood pressure (ibp) numerics calculation algorithm
+
+This exercise is about finding the closest systolic and diastolic pressures
+from a given reference point in the invasive blood pressure waveform.
+The algorithm receives a buffer representing the ibp waveform, the
+buffer size, and the reference point index selected by the user.
+
+Based on the given filtered invasive blood pressure waveform buffer,
+the algorithm tries to find, from the index informed by the user,
+the peaks and valleys to determine what are the nearest ibp systolic and
+diastolic values at that point.
+
+The search was limited to 6 seconds of waveform, so this algorithm has
+a cost of O(1), instead of depending on the size of the input buffer.
+This choice is suitable for this kind of problem and defines the 10bpm
+as the low heart rate limit for this algorithm to work properly. This
+number of bpm is lower than a human heart can work and was took from
+the lowest value a well known patient simulator can work (from Fluke
+Coporation).
+
+Based on the morphology of the ibp waveform, the algorithm searches for
+two peaks and two valleys over the cardiac cycles, representing the systolic
+peak, the diastolic valley, the notch peak and the notch valley. The search
+is done forward and backward of the informed index, limited to 350 samples
+each side (3 seconds), 2 peaks and 2 valleys.
+
+After the search is done forward and backward the index informed by the user,
+the algorithm calculates which ones are the closest to the index, as required
+by the specification. If the algorithm finds, for example, a higher peak
+forward but a closer peak backward, it will return the closer one as the
+systolic value. The same rule applies for the diastolic value.
+
+The algorithm return SUCCESS if it finds the systolic and diastolic values
+and FAIL otherwise.
+
