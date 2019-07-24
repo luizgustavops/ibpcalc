@@ -1,6 +1,6 @@
 # ibpcalc
 
-Exercise on calculating the nearest systolic and diastolic pressures in an Ibp
+Exercise on calculating the systolic and diastolic pressures in an Ibp
 waveform buffer.
 
 * API call example:
