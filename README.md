@@ -25,11 +25,20 @@ waveform buffer.
      make 4.1  (make)
      gcc 4.7.4 (gcc-4.7 gcc-4.7-base:amd64)
      CUnit 2.1-3 (libcunit1-dev libcunit1-doc libcunit1)
+     cppcheck (cppcheck libtinyxml2-2v5 python-chardet python-pkg-resources python-pygments)
+     valgrind (valgrind)
 
 * How to build
      cmake .
      make (will generate the libibpcalc.so library and ibpcalc_test unit tests binary)
      make test (check the result log in the Testing dir)
+
+* Static and dynamic analysis
+     The static analysis is done with cppcheck command:
+     ./static_analysis.sh
+
+     The dynamic analysis is done with valgrind:
+     ./dynamic_analysis.sh
 
 * Additional documentation
      Please read the doc/ directory files for algorithm explanation and the coding
