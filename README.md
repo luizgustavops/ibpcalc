@@ -37,7 +37,8 @@ waveform buffer.
      The static analysis is done with cppcheck command:
      ./static_analysis.sh
 
-     The dynamic analysis is done with valgrind:
+     The dynamic analysis is done with valgrind. After building the 'ibpcalc_test' application,
+     run the following command:
      ./dynamic_analysis.sh
 
 * Additional documentation
