@@ -6,7 +6,8 @@
  *        This library contains the algorithm to calculate the systolic and diastolic
  *        pressures (in mmHg) of the buffer informed as argument to the ibpCalc function.
  */
-
+#ifndef IBPCALC_H
+#define IBPCALC_H
 /**
  * \def SUCCESS
  * \brief Code returned if the API function finds the sys and dia values.
@@ -38,3 +39,5 @@ struct IbpNumerics {
  * \return SUCCESS if sys and dia values were found and FAIL otherwise.
  */
 int ibpCalc(const char* buf, int size, int index, struct IbpNumerics* const numerics);
+
+#endif // IBPCALC_H
