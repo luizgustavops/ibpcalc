@@ -29,6 +29,7 @@ waveform buffer.
      cmake 3.5.1 (cmake cmake-data)
      make 4.1  (make)
      gcc 4.7.4 (gcc-4.7 gcc-4.7-base:amd64)
+     doxygen 1.8.11 (doxygen libclang1-3.8 libobjc-5-dev)
      CUnit 2.1-3 (libcunit1-dev libcunit1-doc libcunit1)
      cppcheck (cppcheck libtinyxml2-2v5 python-chardet python-pkg-resources python-pygments)
      valgrind (valgrind)
@@ -36,7 +37,7 @@ waveform buffer.
 * How to build
 
      cmake .
-     make (will generate the libibpcalc.so library and ibpcalc_test unit tests binary)
+     make (will generate the libibpcalc.so library, ibpcalc_test unit tests binary and doxygen documentation)
      make test (check the result log in the Testing dir)
 
 * Static and dynamic analysis
