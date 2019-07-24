@@ -9,7 +9,13 @@
 #include "ibpcalc.h"
 
 // Local definitions
+/**
+ * \brief Definition for true value returned by the local functions.
+ */
 #define TRUE 1
+/**
+ * \brief Definition of false value returned by the local functions.
+ */
 #define FALSE 0
 
 /**
@@ -33,6 +39,9 @@
 #define MAXSAMPLES 375
 
 // Debug on/off
+/**
+ * \brief Definition of print macro to enable/disable debugging.
+ */
 //#define PRINT printf
 #define PRINT(...) /**/
 

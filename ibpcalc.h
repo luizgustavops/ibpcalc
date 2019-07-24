@@ -24,10 +24,10 @@
  * \brief Structure that contains the numerics of the Ibp parameter.
  */
 struct IbpNumerics {
-   int sys;
-   int sysIndex;
-   int dia;
-   int diaIndex;
+   int sys;      ///< Systolic value 
+   int sysIndex; ///< Systolic index
+   int dia;      ///< Diastolic value
+   int diaIndex; ///< Diastolic index
 };
 
 /**
